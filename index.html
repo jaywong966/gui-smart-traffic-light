@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class=" scrollbar-type-1 sb-cyan">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- Metro 4 -->
+	<link rel="stylesheet" href="https://cdn.metroui.org.ua/v4.3.2/css/metro-all.min.css">
+	<link rel="stylesheet" href="css/index.css">
+
+	<title>Smart Traffic Light</title>
+
+	<script>
+		window.on_page_functions = [];
+	</script>
+</head>
+<body class="m4-cloak h-vh-100">
+<div data-role="navview" data-toggle="#paneToggle" data-expand="xl" data-compact="lg" data-active-state="true">
+	<div class="navview-pane">
+		<div class="bg-cyan d-flex flex-align-center">
+			<button class="pull-button m-0 bg-darkCyan-hover">
+				<span class="mif-menu fg-white"></span>
+			</button>
+			<h6 class="text-light m-0 fg-white pl-7" style="line-height: 52px">Smart Traffic Light</h6>
+		</div>
+
+		<ul class="navview-menu mt-4" id="side-menu">
+			<li>
+				<a href="#dashboard">
+					<span class="icon"><span class="mif-meter"></span></span>
+					<span class="caption">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="#widgets">
+					<span class="icon"><span class="mif-widgets"></span></span>
+					<span class="caption">Widgets</span>
+				</a>
+			</li>
+		</ul>
+
+		<div class="w-100 text-center text-small data-box p-2 border-top bd-grayMouse" style="position: absolute; bottom: 0">
+			<div>&copy; 2019 <a href="mailto:sergey@pimenov.com.ua" class="text-muted fg-white-hover no-decor">Sergey Pimenov</a></div>
+			<div>Created with <a href="https://metroui.org.ua" class="text-muted fg-white-hover no-decor">Metro 4</a></div>
+		</div>
+	</div>
+
+	<div class="navview-content h-100">
+		<div data-role="appbar" class="pos-absolute bg-darkCyan fg-white">
+			<a href="#" class="app-bar-item d-block d-none-lg" id="paneToggle"><span class="mif-menu"></span></a>
+		</div>
+		<div id="content-wrapper" class="content-inner h-100" style="overflow-y: auto">
+			<div id="dashboard"></div>
+		</div>
+	</div>
+</div>
+
+
+<!-- jQuery first, then Metro UI JS -->
+<script src="vendors/jquery/jquery-3.4.1.min.js"></script>
+<script src="vendors/chartjs/Chart.bundle.min.js"></script>
+<script src="vendors/qrcode/qrcode.min.js"></script>
+<script src="vendors/jsbarcode/JsBarcode.all.min.js"></script>
+<script src="vendors/ckeditor/ckeditor.js"></script>
+<script src="vendors/metro4/js/metro.min.js"></script>
+<script src="index.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
