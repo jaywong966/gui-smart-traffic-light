@@ -1,0 +1,8 @@
+{
+    "device": "cuda",
+    "weights": "weights/yolov5m.pt",
+    "half": true,
+    "custom_class": "classes/custom_classes.txt",
+    "target_class": "classes/coco_classes.txt",
+    "classify": false
+}

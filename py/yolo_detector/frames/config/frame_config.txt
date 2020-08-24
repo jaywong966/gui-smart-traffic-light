@@ -1,0 +1,4 @@
+{
+    "source": "config/streams_list.txt",
+    "imgsz": 640
+}
