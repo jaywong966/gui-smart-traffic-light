@@ -48,7 +48,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
         # Added(11/8/2020)
         self.roi_list = [None] * n
         self.iou_list = [None] * n
-        self.roi_list, self.iou_list, self.preprocessing_flag, self.postprocessing_flag = load_roi_config(n)
+        self.roi_list, self.iou_list, self.preprocessing_flag, self.postprocessing_flag, self.draw_iou_flag = load_roi_config(n)
         #
         self.imgs = [None] * n
         self.caps = [None] * n

@@ -13,7 +13,7 @@ from threading import Thread
 module_path = os.path.dirname(os.path.abspath( __file__ ))
 sys.path.append(module_path)
 from utils.utils import *
-from detection_roi.roi import roi_postprocessing , draw_roi
+from detection_roi.roi import roi_postprocessing , draw_roi, create_masks
 
 class yolo_detector:
     
@@ -30,6 +30,8 @@ class yolo_detector:
         #Add 19/08/2020
         self.detected_counts = [None] * self.frames.get_source_num()
         self.iou_list = frames.iou_list
+        self.postprocessing_flag = frames.postprocessing_flag
+        self.draw_iou_flag = frames.draw_iou_flag
         #
     
   
@@ -46,7 +48,11 @@ class yolo_detector:
         device = self.device
         #Add 19/08/2020
         iou_list = self.iou_list 
-        #
+        #Add 26/08/2020
+        black_image, ROImasksA, ROImasksB = create_masks(frames.get_frames(), iou_list)
+        postprocessing_flag = self.postprocessing_flag
+        draw_iou_flag = self.draw_iou_flag
+        
         
         #read config
         out, view_img, save_img, save_txt, fourcc  = detect_config.values()
@@ -61,15 +67,14 @@ class yolo_detector:
         
         # Run detection
         for sources, imgs_to_model, imgs_to_show, vid_cap in frames:
-            
+                    
             #inference
             pred, imgs_to_model , imgs_to_show, Inference_time, NMS_time, Classifier_time = inference(device, imgs_to_model, imgs_to_show, model, modelc, inference_config)
             
-            #Added 2020/08/13
+            #Added 2020/08/13(abendoned method)
             # roi_postprocessing(pred, imgs_to_model, iou_list)
-            
             #Processing (Edited: add one more parameter(iou_list) for Process_detection)
-            im0s_detection, detection_results, instances_of_classes, object_counts = Process_detections(module_path, out, sources, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt, iou_list)          
+            im0s_detection, detection_results, instances_of_classes, object_counts = Process_detections(module_path, out, sources, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt,postprocessing_flag, iou_list,black_image, ROImasksA, ROImasksB)          
             im0s_detection = [draw_image(source, im0_detection, detection_result, Inference_time, NMS_time, Classifier_time) for source, im0_detection, detection_result in zip(sources, im0s_detection, detection_results)]
             self.detected_imgs = im0s_detection
             self.isdetect = True
@@ -83,8 +88,10 @@ class yolo_detector:
                 
             # Stream results (frames with detections)
             if view_img:
+                if draw_iou_flag:
+                    im0s_detection = [draw_roi(im0_detection,iou[0],(255,255,0)) for im0_detection, iou in zip(im0s_detection, iou_list)]
                 [display_image(source, im0_detection, sources.index(source)) for source, im0_detection in zip(sources, im0s_detection)]
-                # [draw_roi(im0_detection,[iou[0]],(255,255,0)) for im0_detection, iou in zip(im0s_detection, iou_list)]
+               
             # Print time (inference + NMS)
             for instance_of_classes in instances_of_classes:  
                 print('%sDone. (Inference %.3fs)(NMS_time %.3fs)(Classifier_time %.3fs)' % (instance_of_classes, Inference_time, NMS_time, Classifier_time))
@@ -96,6 +103,7 @@ class yolo_detector:
             
         #results.append(result_in_frame)
         print('Done. (%.3fs)' % (time.time() - t0)) 
+        # print(self.get_detected_counts())
     
         if save_txt or save_img:
             print('Results saved to %s' % os.path.join(module_path,out))

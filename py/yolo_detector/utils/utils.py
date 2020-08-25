@@ -261,7 +261,7 @@ def inference(device, imgs_to_model, imgs_to_show, model, modelc, inference_conf
 
 
 
-def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt, iou_list):
+def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt, postprocessing_flag,iou_list,black_image, ROImasksA, ROImasksB):
     
     im0s_detection = []
     detection_results = []
@@ -294,7 +294,17 @@ def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, img
             # filter results
             for *xyxy, conf, cls in det:
                 if any(elem in [coco_classes[int(cls)]]  for elem in custom_classes):
-                    if roi_postprocessing_by_xyxy(xyxy, imgs_to_show ,i , iou_list):
+                    if postprocessing_flag:
+                        if roi_postprocessing_by_xyxy(xyxy, imgs_to_show ,i , iou_list, black_image, ROImasksA, ROImasksB):
+                            label = '%s %.2f' % (coco_classes[int(cls)], conf)
+                            plot_one_box(xyxy, img_to_show, label=label, color=colors[int(cls)], line_thickness=1)
+                            object_count += 1
+                            if save_txt:  # Write to file
+                                xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                                
+                                with open(save_path_txt[:save_path_txt.rfind('.')] + '.txt', 'a') as file: #
+                                    file.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
+                    else:
                         label = '%s %.2f' % (coco_classes[int(cls)], conf)
                         plot_one_box(xyxy, img_to_show, label=label, color=colors[int(cls)], line_thickness=1)
                         object_count += 1
@@ -303,7 +313,7 @@ def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, img
                             
                             with open(save_path_txt[:save_path_txt.rfind('.')] + '.txt', 'a') as file: #
                                 file.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
-                            
+                                
         im0s_detection.append(img_to_show)
         detection_results.append(detection_result)
         instances_of_classes.append(instance_of_classes)
