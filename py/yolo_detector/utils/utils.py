@@ -10,7 +10,11 @@ import cv2
 
 import torch
 import torchvision
+<<<<<<< HEAD
 from utils import torch_utils
+=======
+from yolo_detector.utils import torch_utils
+>>>>>>> 1fe31648ff0fc768ec220682869136040a8f3238
 from detection_roi.roi import roi_postprocessing_by_xyxy
 
 # Set printoptions
@@ -199,6 +203,7 @@ def draw_image(p, imgs_to_show, r, Inference_time, NMS_time, Classifier_time):
 
     return imgs_to_show
 
+<<<<<<< HEAD
 def display_image(p, imgs_to_show, index):
     cv2.namedWindow(p, cv2.WINDOW_NORMAL) 
 # =============================================================================
@@ -206,6 +211,10 @@ def display_image(p, imgs_to_show, index):
 #     y = int((index /4)) * 300 + 150
 #     cv2.moveWindow(p,x,y)
 # =============================================================================
+=======
+def display_image(p, imgs_to_show):
+    cv2.namedWindow(p, cv2.WINDOW_NORMAL) 
+>>>>>>> 1fe31648ff0fc768ec220682869136040a8f3238
     cv2.imshow(p, imgs_to_show)   
 
 def load_vid_writers(frames, out, fourcc, module_path):
@@ -261,7 +270,11 @@ def inference(device, imgs_to_model, imgs_to_show, model, modelc, inference_conf
 
 
 
+<<<<<<< HEAD
 def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt, postprocessing_flag,iou_list,black_image, ROImasksA, ROImasksB):
+=======
+def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt, iou_list):
+>>>>>>> 1fe31648ff0fc768ec220682869136040a8f3238
     
     im0s_detection = []
     detection_results = []
@@ -294,6 +307,7 @@ def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, img
             # filter results
             for *xyxy, conf, cls in det:
                 if any(elem in [coco_classes[int(cls)]]  for elem in custom_classes):
+<<<<<<< HEAD
                     if postprocessing_flag:
                         if roi_postprocessing_by_xyxy(xyxy, imgs_to_show ,i , iou_list, black_image, ROImasksA, ROImasksB):
                             label = '%s %.2f' % (coco_classes[int(cls)], conf)
@@ -305,6 +319,9 @@ def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, img
                                 with open(save_path_txt[:save_path_txt.rfind('.')] + '.txt', 'a') as file: #
                                     file.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
                     else:
+=======
+                    if roi_postprocessing_by_xyxy(xyxy, imgs_to_show ,i , iou_list):
+>>>>>>> 1fe31648ff0fc768ec220682869136040a8f3238
                         label = '%s %.2f' % (coco_classes[int(cls)], conf)
                         plot_one_box(xyxy, img_to_show, label=label, color=colors[int(cls)], line_thickness=1)
                         object_count += 1
@@ -313,7 +330,11 @@ def Process_detections(module_path, out, paths, colors, pred, imgs_to_model, img
                             
                             with open(save_path_txt[:save_path_txt.rfind('.')] + '.txt', 'a') as file: #
                                 file.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
+<<<<<<< HEAD
                                 
+=======
+                            
+>>>>>>> 1fe31648ff0fc768ec220682869136040a8f3238
         im0s_detection.append(img_to_show)
         detection_results.append(detection_result)
         instances_of_classes.append(instance_of_classes)
