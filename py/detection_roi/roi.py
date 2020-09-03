@@ -6,7 +6,8 @@ import os
 import json
 import ast
 import copy
-       
+import time
+
 def get_roi_frame(current_frame, polygon):
     mask = np.zeros(current_frame.shape, dtype=np.uint8)
     polygon = np.array([polygon], dtype=np.int32)
@@ -105,17 +106,17 @@ def roi_postprocessing(pred, imgs_to_model, iou_list):
 
 
 def create_masks(imgs_to_show, iou_list):
-    black_image = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
+    black_image = np.zeros(imgs_to_show[0].shape[:2], dtype=np.uint8)
+    cv2.resize(black_image,None,fx=0.25, fy=0.25, interpolation=cv2.INTER_AREA)
     polygonsA = []
     polygonsB = []
     ROImasksA = []
     ROImasksB = []
-
     for x in iou_list:
         ROImasksA.append(copy.deepcopy(black_image))
         ROImasksB.append(copy.deepcopy(black_image))
-        polygonsA.append(np.array(x[0], dtype=np.int32))
-        polygonsB.append(np.array(x[1], dtype=np.int32))
+        polygonsA.append((np.array(x[0])/4).astype("int32"))
+        polygonsB.append((np.array(x[1])/4).astype("int32"))
     for polygonA, polygonB, ROImaskA, ROImaskB in zip(polygonsA, polygonsB, ROImasksA, ROImasksB):
         if len(polygonA) >= 3 :
             cv2.fillPoly(ROImaskA, [polygonA], (255,255,255))
@@ -126,26 +127,33 @@ def create_masks(imgs_to_show, iou_list):
 def roi_postprocessing_by_xyxy(xyxy, imgs_to_show, stream_index , iou_list,  black_image, ROImasksA, ROImasksB):
     # Case1: ROI_A is empty, then do nothing.
     filter_flag = True
-    
+    t0 = time.time()
     # Case2: Both ROIs is not empty 
     if len(iou_list[stream_index][0]) >= 3 and len(iou_list[stream_index][1]) >= 3 :
         filter_flag = False
         
        #create black image
         mask = copy.deepcopy(black_image)
+        t1 = time.time()
         
         #draw bbox 20% on the mask
-        a1, a2, a3, a4 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
+        a1, a2, a3, a4 = int(xyxy[0]/4), int(xyxy[1]/4), int(xyxy[2]/4), int(xyxy[3]/4)
         a2 = a4 - round((a4- a2 )* 0.2)
         c1, c2 = (a1,a2), (a3,a4)
         cv2.rectangle(mask, c1, c2, (255,255,255), -1, cv2.LINE_AA)
-        
+        t2 = time.time()
         #get the amounts of non-zero pixels on ROI_A and ROI_B and then compare with them
         output_A = cv2.bitwise_and(mask,ROImasksA[stream_index])
         non_zero_on_A  = len(output_A[np.nonzero(output_A)])
         output_B = cv2.bitwise_and(mask,ROImasksB[stream_index])
         non_zero_on_B = len(output_B[np.nonzero(output_B)])
-        
+        t3 = time.time()
+        t10 = t1-t0
+        t21 = t2-t1
+        t32 = t3-t2
+        print ("     create black image: %.3f s" % t10)
+        print("     create draw bbox on black image: %.3f s" % t21)
+        print("     compare: %.3f s" % t32)
         #if non-zero pixel on ROI_A is more than on ROI_B, the bbox will be plotted and counted.
         if non_zero_on_A > non_zero_on_B:
             filter_flag = True
@@ -158,7 +166,7 @@ def roi_postprocessing_by_xyxy(xyxy, imgs_to_show, stream_index , iou_list,  bla
         mask = copy.deepcopy(black_image)
        
         #draw bbox 20% on mask
-        a1, a2, a3, a4 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
+        a1, a2, a3, a4 = int(xyxy[0]/4), int(xyxy[1]/4), int(xyxy[2]/4), int(xyxy[3]/4)
         a2 = a4 - round((a4- a2 )* 0.2)
         c1, c2 = (a1,a2), (a3,a4)       
         cv2.rectangle(mask, c1, c2, (255,255,255), -1, cv2.LINE_AA)    
@@ -216,88 +224,3 @@ def load_roi_config(source_num):
     postprocessing_flag = flag_config['postprocessing_flag']
     draw_iou_flag = flag_config['draw_iou_flag']
     return roi_list, iou_list , preprocessing_flag, postprocessing_flag, draw_iou_flag
-
-# ======================backup=======================================================
-# def roi_postprocessing_by_xyxy(xyxy, imgs_to_show,stream_index , iou_list):
-#     filter_flag = True
-#     if len(iou_list[stream_index][0]) >= 3 and len(iou_list[stream_index][1]) >= 3 :
-#         filter_flag = False
-#         polygonA = np.array([iou_list[stream_index][0]], dtype=np.int32)
-#         polygonB = np.array([iou_list[stream_index][1]], dtype=np.int32)
-#         # imshow all bbox (1/3)
-#         # all_bboxs = np.zeros(imgs_to_model[0].shape, dtype=np.uint8)
-#         # all_bboxs = all_bboxs[::-1, :, :].transpose(1, 2, 0) 
-#         # all_bboxs = np.ascontiguousarray(all_bboxs)
-#         #create black image
-#         mask = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
-#         ROImaskA = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
-#         ROImaskB = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
-# 
-#         a1, a2, a3, a4 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
-#         #bbox 20%
-#         a2 = a4 - round((a4- a2 )* 0.2)
-#         c1, c2 = (a1,a2), (a3,a4)
-#         cv2.rectangle(mask, c1, c2, (255,255,255), -1, cv2.LINE_AA)
-#         # imshow all bbox (2/3)
-#         # cv2.rectangle(all_bboxs, c1, c2, (255,255,255), -1, cv2.LINE_AA)
-#         
-#         # show before iou (each bbox)  (need update)
-#         # cv2.namedWindow( 'test1:' , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow('test1:', ROImaskA)
-#         
-#         # # check bbox size
-#         # nonzero_count = len(mask[np.nonzero(mask)])
-#         # print('before')                    
-#         # print(nonzero_count)
-#         
-#         cv2.fillPoly(ROImaskA, polygonA, (255,255,255))
-#         cv2.fillPoly(ROImaskB, polygonB, (255,255,255))
-#         # show roi
-#         # cv2.namedWindow( 'ROI_A' , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow( 'ROI_A', ROImaskA)
-#         # cv2.namedWindow( 'ROI_B' , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow( 'ROI_B', ROImaskB)
-#         output_A = cv2.bitwise_and(mask,ROImaskA)
-#         print(output_A)
-#         non_zero_on_A  = len(output_A[np.nonzero(output_A)])
-#         output_B = cv2.bitwise_and(mask,ROImaskB)
-#         non_zero_on_B = len(output_B[np.nonzero(output_B)])
-#         # print('after')                    
-#         # print(non_zero_on_A, non_zero_on_B)
-#         if non_zero_on_A > non_zero_on_B:
-#             filter_flag = True
-#         # imshow after iou (need update)
-#         # cv2.namedWindow( 'test2A:' +str(j) , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow('test2A:' + str(j) , output_A)   
-#         # cv2.namedWindow( 'test2B:' +str(j) , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow('test2B:' + str(j) , output_B)   
-#         # imshow all bbox(3/3)
-#         # cv2.namedWindow( 'all bbox on stream ' +str(i) , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow('all bbox on stream ' +str(i)  , all_bboxs)  
-#         # show roi
-#         # cv2.namedWindow( 'ROI_A' , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow( 'ROI_A', ROImaskA)
-#         # cv2.namedWindow( 'ROI_B' , cv2.WINDOW_NORMAL) 
-#         # cv2.imshow( 'ROI_B', ROImaskB)
-#     if len(iou_list[stream_index][0]) >= 3 and len(iou_list[stream_index][1]) < 3 :
-#         filter_flag = False
-#         polygonA = np.array([iou_list[stream_index][0]], dtype=np.int32)
-#         #creat black image
-#         mask = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
-#         ROImaskA = np.zeros(imgs_to_show[0].shape, dtype=np.uint8)
-#         a1, a2, a3, a4 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
-#         #bbox 20%
-#         a2 = a4 - round((a4- a2 )* 0.2)
-#         c1, c2 = (a1,a2), (a3,a4)
-#         cv2.rectangle(mask, c1, c2, (255,255,255), -1, cv2.LINE_AA)        
-#         # # check bbox size
-#         nonzero_count = len(mask[np.nonzero(mask)])
-#         cv2.fillPoly(ROImaskA, polygonA, (255,255,255))
-#         # show roi
-#         output_A = cv2.bitwise_and(mask,ROImaskA)
-#         non_zero_on_A  = len(output_A[np.nonzero(output_A)])
-#         if non_zero_on_A > nonzero_count*0.8:
-#             filter_flag = True
-#                 
-#     return filter_flag
-# =============================================================================
