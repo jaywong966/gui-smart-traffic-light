@@ -61,12 +61,12 @@ cvService_get_location_list_result.prototype.read = function(input) {
       case 0:
       if (ftype == Thrift.Type.LIST) {
         this.success = [];
-        var _rtmp315 = input.readListBegin();
-        var _size14 = _rtmp315.size || 0;
-        for (var _i16 = 0; _i16 < _size14; ++_i16) {
-          var elem17 = null;
-          elem17 = input.readString();
-          this.success.push(elem17);
+        var _rtmp320 = input.readListBegin();
+        var _size19 = _rtmp320.size || 0;
+        for (var _i21 = 0; _i21 < _size19; ++_i21) {
+          var elem22 = null;
+          elem22 = input.readString();
+          this.success.push(elem22);
         }
         input.readListEnd();
       } else {
@@ -90,10 +90,10 @@ cvService_get_location_list_result.prototype.write = function(output) {
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRING, this.success.length);
-    for (var iter18 in this.success) {
-      if (this.success.hasOwnProperty(iter18)) {
-        iter18 = this.success[iter18];
-        output.writeString(iter18);
+    for (var iter23 in this.success) {
+      if (this.success.hasOwnProperty(iter23)) {
+        iter23 = this.success[iter23];
+        output.writeString(iter23);
       }
     }
     output.writeListEnd();

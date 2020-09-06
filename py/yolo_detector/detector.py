@@ -80,7 +80,7 @@ class yolo_detector:
             #Add 19/08/2020
             self.detected_counts = object_counts
             #
-            
+            print(self.detected_counts)
             # Save results (frames with detections)
             if save_img:
                 [vid_writer.write(im0_detection) for vid_writer,im0_detection in zip(vid_writers,im0s_detection)]
@@ -93,8 +93,8 @@ class yolo_detector:
                
             # Print time (inference + NMS)
 # =============================================================================
-#             for instance_of_classes in instances_of_classes:  
-#                 print('%sDone. (Inference %.3fs)(NMS_time %.3fs)(Classifier_time %.3fs)' % (instance_of_classes, Inference_time, NMS_time, Classifier_time))
+            for instance_of_classes in instances_of_classes:
+                print('%sDone. (Inference %.3fs)(NMS_time %.3fs)(Classifier_time %.3fs)' % (instance_of_classes, Inference_time, NMS_time, Classifier_time))
 # =============================================================================
         
         #release video writer

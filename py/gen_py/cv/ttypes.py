@@ -66,8 +66,13 @@ class LocationInfo(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
-                if ftype == TType.STRING:
-                    self.traffic_signals = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                if ftype == TType.LIST:
+                    self.traffic_signals = []
+                    (_etype10, _size7) = iprot.readListBegin()
+                    for _i11 in range(_size7):
+                        _elem12 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        self.traffic_signals.append(_elem12)
+                    iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 5:
@@ -88,9 +93,9 @@ class LocationInfo(object):
         if self.encoded_images is not None:
             oprot.writeFieldBegin('encoded_images', TType.MAP, 1)
             oprot.writeMapBegin(TType.STRING, TType.STRING, len(self.encoded_images))
-            for kiter7, viter8 in self.encoded_images.items():
-                oprot.writeString(kiter7.encode('utf-8') if sys.version_info[0] == 2 else kiter7)
-                oprot.writeString(viter8.encode('utf-8') if sys.version_info[0] == 2 else viter8)
+            for kiter13, viter14 in self.encoded_images.items():
+                oprot.writeString(kiter13.encode('utf-8') if sys.version_info[0] == 2 else kiter13)
+                oprot.writeString(viter14.encode('utf-8') if sys.version_info[0] == 2 else viter14)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.n_pedestrians is not None:
@@ -102,8 +107,11 @@ class LocationInfo(object):
             oprot.writeI32(self.n_vehicles)
             oprot.writeFieldEnd()
         if self.traffic_signals is not None:
-            oprot.writeFieldBegin('traffic_signals', TType.STRING, 4)
-            oprot.writeString(self.traffic_signals.encode('utf-8') if sys.version_info[0] == 2 else self.traffic_signals)
+            oprot.writeFieldBegin('traffic_signals', TType.LIST, 4)
+            oprot.writeListBegin(TType.STRING, len(self.traffic_signals))
+            for iter15 in self.traffic_signals:
+                oprot.writeString(iter15.encode('utf-8') if sys.version_info[0] == 2 else iter15)
+            oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.count_down is not None:
             oprot.writeFieldBegin('count_down', TType.I32, 5)
@@ -157,11 +165,11 @@ class SnapShots(object):
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.encoded_images = {}
-                    (_ktype10, _vtype11, _size9) = iprot.readMapBegin()
-                    for _i13 in range(_size9):
-                        _key14 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val15 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.encoded_images[_key14] = _val15
+                    (_ktype17, _vtype18, _size16) = iprot.readMapBegin()
+                    for _i20 in range(_size16):
+                        _key21 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val22 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        self.encoded_images[_key21] = _val22
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -182,9 +190,9 @@ class SnapShots(object):
         if self.encoded_images is not None:
             oprot.writeFieldBegin('encoded_images', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRING, len(self.encoded_images))
-            for kiter16, viter17 in self.encoded_images.items():
-                oprot.writeString(kiter16.encode('utf-8') if sys.version_info[0] == 2 else kiter16)
-                oprot.writeString(viter17.encode('utf-8') if sys.version_info[0] == 2 else viter17)
+            for kiter23, viter24 in self.encoded_images.items():
+                oprot.writeString(kiter23.encode('utf-8') if sys.version_info[0] == 2 else kiter23)
+                oprot.writeString(viter24.encode('utf-8') if sys.version_info[0] == 2 else viter24)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -209,7 +217,7 @@ LocationInfo.thrift_spec = (
     (1, TType.MAP, 'encoded_images', (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), None, ),  # 1
     (2, TType.I32, 'n_pedestrians', None, None, ),  # 2
     (3, TType.I32, 'n_vehicles', None, None, ),  # 3
-    (4, TType.STRING, 'traffic_signals', 'UTF8', None, ),  # 4
+    (4, TType.LIST, 'traffic_signals', (TType.STRING, 'UTF8', False), None, ),  # 4
     (5, TType.I32, 'count_down', None, None, ),  # 5
 )
 all_structs.append(SnapShots)

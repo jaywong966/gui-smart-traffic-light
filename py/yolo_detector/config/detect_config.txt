@@ -1,6 +1,6 @@
 {
     "out": "output/videos_out/videos",
-    "view_img": true,
+    "view_img": false,
     "save_img": false,
     "save_txt": false,
     "fourcc": "mp4v"

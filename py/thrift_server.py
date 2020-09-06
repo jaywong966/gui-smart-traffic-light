@@ -27,25 +27,31 @@ class CVServer:
             dummy_images.append(b64_encoded_image)
         
         #dummy data
-        self.locations = ['Location-A', 'Location-B', 'Location-C'] 
+        self.location_info = []
+        self.n_pedestrians = 5
+        self.n_vehicles = 5
+        self.countdown = 5
+        self.light_signal = ["Red", "Red", "Red", "Red", "Red"]
+        self.locations = ['Location-A', 'Location-B', 'Location-C']
         self.location_views = {
             'Location-A': {
-                'Camera1':dummy_images[0],
-                'Camera2':dummy_images[1],
-                'Camera3':dummy_images[2],
-                'Camera4':dummy_images[3],
+                'Camera1': dummy_images[0],
+                'Camera2': dummy_images[1],
+                'Camera3': dummy_images[2],
+                'Camera4': dummy_images[3],
+                'Camera5': dummy_images[4],
             },
             'Location-B': {
-                'Camera1':dummy_images[4],
-                'Camera2':dummy_images[5],
-                'Camera3':dummy_images[6],
-                'Camera4':dummy_images[7],
+                'Camera1': dummy_images[4],
+                'Camera2': dummy_images[5],
+                'Camera3': dummy_images[6],
+                'Camera4': dummy_images[7],
             },
             'Location-C': {
-                'Camera1':dummy_images[8],
-                'Camera2':dummy_images[9],
-                'Camera3':dummy_images[10],
-                'Camera4':dummy_images[11],
+                'Camera1': dummy_images[8],
+                'Camera2': dummy_images[9],
+                'Camera3': dummy_images[10],
+                'Camera4': dummy_images[11],
             },
         }
 
@@ -65,11 +71,11 @@ class CVServer:
 
     def get_location_info(self, location): #service3
         response = LocationInfo()
-        response.encoded_images = self.location_views[location] #dummy
-        response.n_pedestrians = 10 #dummy
-        response.n_vehicles = 23 #dummy
-        response.traffic_signals = 'RED' #dummy
-        response.count_down = 43 #dummy
+        response.encoded_images = self.location_views[location]  # dummy
+        response.n_pedestrians = self.n_pedestrians  # dummy
+        response.n_vehicles = self.n_vehicles  # dummy
+        response.traffic_signals = self.light_signal  # dummy
+        response.count_down = self.countdown  # dummy
         return response
 
     def updata_imgs(self, imgs):
@@ -81,6 +87,17 @@ class CVServer:
         self.location_views['Location-A']['Camera2'] = detected_imgs[1]
         self.location_views['Location-A']['Camera3'] = detected_imgs[2]
         self.location_views['Location-A']['Camera4'] = detected_imgs[3]
+        self.location_views['Location-A']['Camera5'] = detected_imgs[4]
+
+    def update_location_info(self, location_info):
+        self.n_vehicles,self.n_pedestrians = 0,0
+        for i in range(4):
+            self.n_vehicles+=location_info[i]
+        self.n_pedestrians = location_info[4]
+
+    def update_light_signal(self, light_signal, countdown):
+        self.light_signal = light_signal
+        self.countdown = countdown
 
     
 class ThriftServer:
@@ -112,6 +129,12 @@ class ThriftServer:
         
     def update_imgs(self, imgs):
         self.handler.updata_imgs(imgs)
+
+    def update_location_info(self, location_info):
+        self.handler.update_location_info(location_info)
+
+    def update_light_signal(self, light_signal, countdown):
+        self.handler.update_light_signal(light_signal, countdown)
         
     
 

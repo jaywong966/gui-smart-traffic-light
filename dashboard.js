@@ -17,7 +17,34 @@ var map_image_json = {
     "template": "<figure class='text-center'><div class='img-container thumbnail'><img src='<%this.img_src%>'></div><figcaption class='text-bold'><%this.caption%></figcaption></figure>",
     "data": []
 }
+function verification(signal, light, countdown){
+    if(signal == "Red"){
+        $(light).removeClass("bg-yellow");
+        $(light).addClass("bg-red");
+        document.querySelector(light+"text").innerHTML = "NA";
+    }
+    else if(signal == "Green"){
+        $(light).removeClass("bg-red");
+        $(light).addClass("bg-green");
+        document.querySelector(light+"text").innerHTML = countdown;
+    }
+    else if(signal == "Yellow"){
+        $(light).removeClass("bg-green");
+        $(light).addClass("bg-yellow");
+        document.querySelector(light+"text").innerHTML = countdown;
+    }
+}
 
+function changeMAP(signal){
+    var green = signal.indexOf("Green")
+    var yellow = signal.indexOf("Yellow")
+    if (green== -1){
+        document.getElementById("light_map").src = "light/"+String(yellow)+"yellow.jpg";
+    }
+    else if (yellow == -1){
+        document.getElementById("light_map").src = "light/"+String(green)+"green.jpg";
+    }
+}
 setInterval(function(){
     map_targetLocation = get_location();
     if (map_targetLocation != ""){
@@ -42,11 +69,21 @@ setInterval(function(){
                     // document.querySelector('#camera'+camera_id).setAttribute("src", imgSrc);
                     camera_id += 1;
                 }
-
+                changeMAP(result.traffic_signals)
+                var signalColor_1 = result.traffic_signals[0];
+                var signalColor_2 = result.traffic_signals[1];
+                var signalColor_3 = result.traffic_signals[2];
+                var signalColor_4 = result.traffic_signals[3];
+                var signalColor_5 = result.traffic_signals[4];
                 document.querySelector('#map-pedestrians').innerHTML = result.n_pedestrians;
                 document.querySelector('#map-vehicles').innerHTML = result.n_vehicles;
-                document.querySelector('#map-traffic-light-count-down').innerHTML = result.count_down;
-
+                var countdown = result.count_down
+                // document.querySelector('#map-traffic-light-count-down').innerHTML = result.count_down;
+                verification(signalColor_1, '#light1',countdown)
+                verification(signalColor_2, '#light2',countdown)
+                verification(signalColor_3, '#light3',countdown)
+                verification(signalColor_4, '#light4',countdown)
+                verification(signalColor_5, '#p-light',countdown)
             }
         });
 
@@ -56,24 +93,5 @@ setInterval(function(){
             list.draw();
         }
 
-        // $('#light1').removeClass("bg-cyan");
-        // $('#light2').removeClass("bg-green");
-        // $('#light3').removeClass("bg-orange");
-        // $('#light4').removeClass("bg-red");
-        //
-        // var signalColor = result.traffic_signals.toUpperCase();
-        // console.log(signalColor)
-        // if(signalColor == "GREEN"){
-        //     $('#traffic-signal-bg').addClass("bg-green");
-        // }
-        // else if(signalColor == "YELLOW"){
-        //     $('#traffic-signal-bg').addClass("bg-amber");
-        // }
-        // else if(signalColor == "RED"){
-        //     $('#traffic-signal-bg').addClass("bg-red");
-        // }
-        // else{
-        //     $('#traffic-signal-bg').addClass("bg-dark");
-        // }
     }
 }, liveFrameUpdatePeriod);

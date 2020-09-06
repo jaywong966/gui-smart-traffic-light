@@ -29,7 +29,7 @@ var LocationInfo = module.exports.LocationInfo = function(args) {
       this.n_vehicles = args.n_vehicles;
     }
     if (args.traffic_signals !== undefined && args.traffic_signals !== null) {
-      this.traffic_signals = args.traffic_signals;
+      this.traffic_signals = Thrift.copyList(args.traffic_signals, [null]);
     }
     if (args.count_down !== undefined && args.count_down !== null) {
       this.count_down = args.count_down;
@@ -79,8 +79,16 @@ LocationInfo.prototype.read = function(input) {
       }
       break;
       case 4:
-      if (ftype == Thrift.Type.STRING) {
-        this.traffic_signals = input.readString();
+      if (ftype == Thrift.Type.LIST) {
+        this.traffic_signals = [];
+        var _rtmp36 = input.readListBegin();
+        var _size5 = _rtmp36.size || 0;
+        for (var _i7 = 0; _i7 < _size5; ++_i7) {
+          var elem8 = null;
+          elem8 = input.readString();
+          this.traffic_signals.push(elem8);
+        }
+        input.readListEnd();
       } else {
         input.skip(ftype);
       }
@@ -106,11 +114,11 @@ LocationInfo.prototype.write = function(output) {
   if (this.encoded_images !== null && this.encoded_images !== undefined) {
     output.writeFieldBegin('encoded_images', Thrift.Type.MAP, 1);
     output.writeMapBegin(Thrift.Type.STRING, Thrift.Type.STRING, Thrift.objectLength(this.encoded_images));
-    for (var kiter5 in this.encoded_images) {
-      if (this.encoded_images.hasOwnProperty(kiter5)) {
-        var viter6 = this.encoded_images[kiter5];
-        output.writeString(kiter5);
-        output.writeString(viter6);
+    for (var kiter9 in this.encoded_images) {
+      if (this.encoded_images.hasOwnProperty(kiter9)) {
+        var viter10 = this.encoded_images[kiter9];
+        output.writeString(kiter9);
+        output.writeString(viter10);
       }
     }
     output.writeMapEnd();
@@ -127,8 +135,15 @@ LocationInfo.prototype.write = function(output) {
     output.writeFieldEnd();
   }
   if (this.traffic_signals !== null && this.traffic_signals !== undefined) {
-    output.writeFieldBegin('traffic_signals', Thrift.Type.STRING, 4);
-    output.writeString(this.traffic_signals);
+    output.writeFieldBegin('traffic_signals', Thrift.Type.LIST, 4);
+    output.writeListBegin(Thrift.Type.STRING, this.traffic_signals.length);
+    for (var iter11 in this.traffic_signals) {
+      if (this.traffic_signals.hasOwnProperty(iter11)) {
+        iter11 = this.traffic_signals[iter11];
+        output.writeString(iter11);
+      }
+    }
+    output.writeListEnd();
     output.writeFieldEnd();
   }
   if (this.count_down !== null && this.count_down !== undefined) {
@@ -174,14 +189,14 @@ SnapShots.prototype.read = function(input) {
       case 2:
       if (ftype == Thrift.Type.MAP) {
         this.encoded_images = {};
-        var _rtmp38 = input.readMapBegin();
-        var _size7 = _rtmp38.size || 0;
-        for (var _i9 = 0; _i9 < _size7; ++_i9) {
-          var key10 = null;
-          var val11 = null;
-          key10 = input.readString();
-          val11 = input.readString();
-          this.encoded_images[key10] = val11;
+        var _rtmp313 = input.readMapBegin();
+        var _size12 = _rtmp313.size || 0;
+        for (var _i14 = 0; _i14 < _size12; ++_i14) {
+          var key15 = null;
+          var val16 = null;
+          key15 = input.readString();
+          val16 = input.readString();
+          this.encoded_images[key15] = val16;
         }
         input.readMapEnd();
       } else {
@@ -207,11 +222,11 @@ SnapShots.prototype.write = function(output) {
   if (this.encoded_images !== null && this.encoded_images !== undefined) {
     output.writeFieldBegin('encoded_images', Thrift.Type.MAP, 2);
     output.writeMapBegin(Thrift.Type.STRING, Thrift.Type.STRING, Thrift.objectLength(this.encoded_images));
-    for (var kiter12 in this.encoded_images) {
-      if (this.encoded_images.hasOwnProperty(kiter12)) {
-        var viter13 = this.encoded_images[kiter12];
-        output.writeString(kiter12);
-        output.writeString(viter13);
+    for (var kiter17 in this.encoded_images) {
+      if (this.encoded_images.hasOwnProperty(kiter17)) {
+        var viter18 = this.encoded_images[kiter17];
+        output.writeString(kiter17);
+        output.writeString(viter18);
       }
     }
     output.writeMapEnd();

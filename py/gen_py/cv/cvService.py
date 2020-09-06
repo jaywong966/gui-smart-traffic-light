@@ -304,10 +304,10 @@ class get_location_list_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype21, _size18) = iprot.readListBegin()
-                    for _i22 in range(_size18):
-                        _elem23 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.success.append(_elem23)
+                    (_etype28, _size25) = iprot.readListBegin()
+                    for _i29 in range(_size25):
+                        _elem30 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        self.success.append(_elem30)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -324,8 +324,8 @@ class get_location_list_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRING, len(self.success))
-            for iter24 in self.success:
-                oprot.writeString(iter24.encode('utf-8') if sys.version_info[0] == 2 else iter24)
+            for iter31 in self.success:
+                oprot.writeString(iter31.encode('utf-8') if sys.version_info[0] == 2 else iter31)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
