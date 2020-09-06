@@ -127,33 +127,24 @@ def create_masks(imgs_to_show, iou_list):
 def roi_postprocessing_by_xyxy(xyxy, imgs_to_show, stream_index , iou_list,  black_image, ROImasksA, ROImasksB):
     # Case1: ROI_A is empty, then do nothing.
     filter_flag = True
-    t0 = time.time()
+    
     # Case2: Both ROIs is not empty 
     if len(iou_list[stream_index][0]) >= 3 and len(iou_list[stream_index][1]) >= 3 :
         filter_flag = False
         
        #create black image
         mask = copy.deepcopy(black_image)
-        t1 = time.time()
         
         #draw bbox 20% on the mask
         a1, a2, a3, a4 = int(xyxy[0]/4), int(xyxy[1]/4), int(xyxy[2]/4), int(xyxy[3]/4)
         a2 = a4 - round((a4- a2 )* 0.2)
         c1, c2 = (a1,a2), (a3,a4)
         cv2.rectangle(mask, c1, c2, (255,255,255), -1, cv2.LINE_AA)
-        t2 = time.time()
         #get the amounts of non-zero pixels on ROI_A and ROI_B and then compare with them
         output_A = cv2.bitwise_and(mask,ROImasksA[stream_index])
         non_zero_on_A  = len(output_A[np.nonzero(output_A)])
         output_B = cv2.bitwise_and(mask,ROImasksB[stream_index])
         non_zero_on_B = len(output_B[np.nonzero(output_B)])
-        t3 = time.time()
-        t10 = t1-t0
-        t21 = t2-t1
-        t32 = t3-t2
-        print ("     create black image: %.3f s" % t10)
-        print("     create draw bbox on black image: %.3f s" % t21)
-        print("     compare: %.3f s" % t32)
         #if non-zero pixel on ROI_A is more than on ROI_B, the bbox will be plotted and counted.
         if non_zero_on_A > non_zero_on_B:
             filter_flag = True

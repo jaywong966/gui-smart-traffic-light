@@ -12,12 +12,9 @@ def pass_detected_images(detector, cv_server):
     while True:
         if detector.get_detect_status():
             current_detected_imgs = detector.get_detected_imgs()
-            #get coord
-            #pass coord into ROI class to output (input: corrd,ROI output: counting/list of box)
-            #pass counting to cv_server.update_count
-            cv_server.update_imgs(current_detected_imgs)
             current_detected_counts = detector.get_detected_counts()
-            cv_server.update_location_info(current_detected_counts)
+            cv_server.update_counts(current_detected_counts)
+            cv_server.update_imgs(current_detected_imgs)
         
     
 if __name__ == "__main__":

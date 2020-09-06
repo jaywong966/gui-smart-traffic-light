@@ -49,7 +49,7 @@ if __name__ == '__main__':
             with open('{}/detection_roi/config/postprocessing_config.txt'.format(module_path)) as json_file:
                 preprocessing_config = json.load(json_file)
                 preprocessing_config[str(i)] = f'{roi_A.mouseClickPoints},{roi_B.mouseClickPoints}'
-            with open('{}/detection_roi/config/postprocessing_config.txt.txt'.format(module_path),'w') as json_file:
+            with open('{}/detection_roi/config/postprocessing_config.txt'.format(module_path),'w') as json_file:
                 json.dump(preprocessing_config ,json_file,indent = 4, sort_keys=True)
         elif mode == 2:
             imgs = [letterbox(x, new_shape=frames.img_size, auto=frames.rect)[0] for x in imgs]

@@ -1,6 +1,5 @@
 car
 truck
-person
 bicycle
 motorcycle
 bus

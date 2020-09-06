@@ -11,7 +11,6 @@ from yolo_detector.detector import yolo_detector
 from frames.frames import LoadStreams
 
 
-
 if __name__ == '__main__':
     frames = LoadStreams()
     detector = yolo_detector(frames)

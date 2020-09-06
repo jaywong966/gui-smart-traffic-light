@@ -27,10 +27,6 @@ class CVServer:
             dummy_images.append(b64_encoded_image)
         
         #dummy data
-        self.custom_class = ["cars", "trucks", "persons", "bicycles", "motorcycles", "buss", "traffic lights"]
-        self.location_info = []
-        self.n_pedestrians = 5
-        self.n_vehicles = 5
         self.locations = ['Location-A', 'Location-B', 'Location-C'] 
         self.location_views = {
             'Location-A': {
@@ -38,7 +34,6 @@ class CVServer:
                 'Camera2':dummy_images[1],
                 'Camera3':dummy_images[2],
                 'Camera4':dummy_images[3],
-                'Camera5':dummy_images[4],
             },
             'Location-B': {
                 'Camera1':dummy_images[4],
@@ -70,11 +65,11 @@ class CVServer:
 
     def get_location_info(self, location): #service3
         response = LocationInfo()
-        response.encoded_images = self.location_views[location]  # dummy
-        response.n_pedestrians = self.n_pedestrians  # dummy
-        response.n_vehicles = self.n_vehicles  # dummy
-        response.traffic_signals = 'RED'  # dummy
-        response.count_down = 4  # dummy
+        response.encoded_images = self.location_views[location] #dummy
+        response.n_pedestrians = 10 #dummy
+        response.n_vehicles = 23 #dummy
+        response.traffic_signals = 'RED' #dummy
+        response.count_down = 43 #dummy
         return response
 
     def updata_imgs(self, imgs):
@@ -86,25 +81,6 @@ class CVServer:
         self.location_views['Location-A']['Camera2'] = detected_imgs[1]
         self.location_views['Location-A']['Camera3'] = detected_imgs[2]
         self.location_views['Location-A']['Camera4'] = detected_imgs[3]
-        self.location_views['Location-A']['Camera5'] = detected_imgs[4]
-
-    def update_location_info(self, location_info):
-        self.n_vehicles,self.n_pedestrians = 0,0
-        for i in range(4):
-            self.n_vehicles+=location_info[i]
-        self.n_pedestrians = location_info[4]
-
-    def find_str(self, s, char):
-        index = 0
-        if char in s:
-            c = char[0]
-            for ch in s:
-                if ch == c:
-                    if s[index:index + len(char)] == char:
-                        return index
-
-                index += 1
-        return -1
 
     
 class ThriftServer:
@@ -136,9 +112,6 @@ class ThriftServer:
         
     def update_imgs(self, imgs):
         self.handler.updata_imgs(imgs)
-
-    def update_location_info(self,location_info):
-        self.handler.update_location_info(location_info)
         
     
 
