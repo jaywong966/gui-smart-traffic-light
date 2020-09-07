@@ -21,19 +21,17 @@ class yolo_detector:
         
         self.module_path = os.path.dirname(os.path.abspath( __file__ ))
         self.model_config, self.inference_config, self.detect_config = load_config(self.module_path)
-        self.device, self.model, self.modelc, self.coco_classes, self.custom_classes = load_model(self.module_path, self.model_config )
-        
+        self.device, self.model, self.modelc, self.coco_classes, self.custom_classes = load_model(self.module_path, self.model_config )        
         self.frames = frames
-        self.detected_imgs = [None] * self.frames.get_source_num()
-        
+        self.detected_imgs = [None] * self.frames.get_source_num()       
         self.isdetect = False
+        
         #Add 19/08/2020
         self.detected_counts = [None] * self.frames.get_source_num()
         self.iou_list = frames.iou_list
         self.postprocessing_flag = frames.postprocessing_flag
         self.draw_iou_flag = frames.draw_iou_flag
-        #
-    
+        # 
   
     def detect(self):
         
@@ -75,27 +73,25 @@ class yolo_detector:
             #Processing (Edited: add one more parameter(iou_list) for Process_detection)
             im0s_detection, detection_results, instances_of_classes, object_counts = Process_detections(module_path, out, sources, colors, pred, imgs_to_model, imgs_to_show, coco_classes, custom_classes, save_txt,postprocessing_flag, iou_list,black_image, ROImasksA, ROImasksB)          
             # im0s_detection = [draw_image(source, im0_detection, detection_result, Inference_time, NMS_time, Classifier_time) for source, im0_detection, detection_result in zip(sources, im0s_detection, detection_results)]
+            if draw_iou_flag:
+                im0s_detection = [draw_roi(im0_detection,iou[0],(255,255,0)) for im0_detection, iou in zip(im0s_detection, iou_list)]
             self.detected_imgs = im0s_detection
             self.isdetect = True
             #Add 19/08/2020
             self.detected_counts = object_counts
             #
-            print(self.detected_counts)
+            
             # Save results (frames with detections)
             if save_img:
                 [vid_writer.write(im0_detection) for vid_writer,im0_detection in zip(vid_writers,im0s_detection)]
                 
             # Stream results (frames with detections)
             if view_img:
-                if draw_iou_flag:
-                    im0s_detection = [draw_roi(im0_detection,iou[0],(255,255,0)) for im0_detection, iou in zip(im0s_detection, iou_list)]
                 [display_image(source, im0_detection, sources.index(source)) for source, im0_detection in zip(sources, im0s_detection)]
                
             # Print time (inference + NMS)
-# =============================================================================
-            for instance_of_classes in instances_of_classes:
+            for instance_of_classes in instances_of_classes:  
                 print('%sDone. (Inference %.3fs)(NMS_time %.3fs)(Classifier_time %.3fs)' % (instance_of_classes, Inference_time, NMS_time, Classifier_time))
-# =============================================================================
         
         #release video writer
         if save_img:  
@@ -123,9 +119,6 @@ class yolo_detector:
         print('start detection')
         thread.start()
         #thread.join()
-
-
-
 
 
 # if __name__ == '__main__':
