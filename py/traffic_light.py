@@ -5,7 +5,7 @@ from threading import Thread
 class TrafficSignal:
     def __init__(self):
         self.vehicles_light = ["Red", "Red", "Red", "Red", "Red"]
-        self.vehicles = 0
+        self.vehicles = 1
         self.other_vehicles = 0
         self.num_of_light = 0
         self.vehicles_collect = []
@@ -17,42 +17,64 @@ class TrafficSignal:
         #self.dector = yolo_detector()
 
 
-    def light_control(self):
-        if self.vehicles == 0:
-            self.num_of_light += 1
-            while self.num_of_light == 5:
-                self.num_of_light = 0
-        elif self.vehicles < 2:
-            if self.num_of_light < 4:
-                self.isTimeout = False
-                self.green_light(self.num_of_light)
-                timer_green = Thread(target=self.timer_count(5))
-                timer_green.start()
-                self.yellow_light(self.num_of_light)
-                timer_yellow = Thread(target=self.timer_count(3))
-                timer_yellow.start()
-                self.num_of_light += 1
-                while self.num_of_light == 5:
-                    self.num_of_light = 0
-                self.green_light(self.num_of_light)
-                self.isTimeout = True
-            else:
-                self.isTimeout = False
-                self.green_light(self.num_of_light)
-                timer_green = Thread(target=self.timer_count(9))
-                timer_green.start()
-                self.yellow_light(self.num_of_light)
-                timer_yellow = Thread(target=self.timer_count(3))
-                timer_yellow.start()
-                self.num_of_light += 1
-                while self.num_of_light == 5:
-                    self.num_of_light = 0
-                self.green_light(self.num_of_light)
-                self.isTimeout = True
-        elif self.vehicles > 3:
-            self.green_light(self.num_of_light)
+    # def light_control(self):
+    #     if self.vehicles == 0:
+    #         self.num_of_light += 1
+    #         while self.num_of_light == 5:
+    #             self.num_of_light = 0
+    #     elif self.vehicles < 2:
+    #         if self.num_of_light < 4:
+    #             self.isTimeout = False
+    #             self.green_light(self.num_of_light)
+    #             timer_green = Thread(target=self.timer_count(6))
+    #             timer_green.start()
+    #             self.yellow_light(self.num_of_light)
+    #             timer_yellow = Thread(target=self.timer_count(3))
+    #             timer_yellow.start()
+    #             self.num_of_light += 1
+    #             while self.num_of_light == 5:
+    #                 self.num_of_light = 0
+    #             self.isTimeout = True
+    #         else:
+    #             self.isTimeout = False
+    #             self.green_light(self.num_of_light)
+    #             timer_green = Thread(target=self.timer_count(7))
+    #             timer_green.start()
+    #             self.yellow_light(self.num_of_light)
+    #             timer_yellow = Thread(target=self.timer_count(3))
+    #             timer_yellow.start()
+    #             self.num_of_light += 1
+    #             while self.num_of_light == 5:
+    #                 self.num_of_light = 0
+    #             self.green_light(self.num_of_light)
+    #             self.isTimeout = True
+    #     elif self.vehicles > 3:
+    #         self.green_light(self.num_of_light)
+    #         print("vechile > 3")
         # if self.other_vehicles == 0:
         #     self.green_light(self.num_of_light)
+
+    def light_control(self):
+        if self.location_info[self.num_of_light] == 0:
+            self.num_of_light += 1
+            if self.num_of_light == 5:
+                self.num_of_light = 0
+        elif self.location_info[self.num_of_light] < 2:
+            self.isTimeout = False
+            self.green_light(self.num_of_light)
+            timer_green = Thread(target=self.timer_count(6))
+            timer_green.start()
+            self.yellow_light(self.num_of_light)
+            timer_yellow = Thread(target=self.timer_count(3))
+            timer_yellow.start()
+            self.num_of_light += 1
+            if self.num_of_light == 5:
+                self.num_of_light = 0
+            if self.num_of_light != 3:
+                self.green_light(self.num_of_light)
+            self.isTimeout = True
+        elif self.location_info[self.num_of_light] > 3:
+            self.green_light(self.num_of_light)
 
 
     def get_traffic_signal(self):
@@ -104,13 +126,15 @@ class TrafficSignal:
             time.sleep(1)
 
 
-# if __name__ == '__main__':
-#     traffic = TrafficSignal()
-#     traffic.start()
-#     num = [1,1,1,1,1]
-#     while 1:
-#         traffic.set_location_info(num)
-#         print(traffic.countdown)
+if __name__ == '__main__':
+    traffic = TrafficSignal()
+    traffic.start()
+    num = [1,0,1,0,1]
+    while 1:
+        traffic.set_location_info(num)
+        print(traffic.vehicles_light)
+        print(traffic.countdown)
+
 
 
 

@@ -35,10 +35,10 @@ function onMarkerClick(e) {
 }
 
 var locations = ""
-popupST = createPopup("IVE (Sha Tin)")
-STpop = L.marker([22.390329, 114.198043], {icon: redIcon}).addTo(mymap)
+popupST = createPopup("LaiKing")
+STpop = L.marker([22.346054, 114.129087], {icon: redIcon}).addTo(mymap)
 	.bindPopup(popupST['customHTML'], popupST['customOptions']);
-	// .on('click', onMarkerClick); //mouseover
+// .on('click', onMarkerClick); //mouseover
 STpop.on('click', function(e) {
 	locations = "Location-A";
 })
