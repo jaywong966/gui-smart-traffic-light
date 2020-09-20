@@ -62,7 +62,7 @@ class TrafficSignal:
         elif self.location_info[self.num_of_light] < 2:
             self.isTimeout = False
             self.green_light(self.num_of_light)
-            timer_green = Thread(target=self.timer_count(6))
+            timer_green = Thread(target=self.timer_count(5))
             timer_green.start()
             self.yellow_light(self.num_of_light)
             timer_yellow = Thread(target=self.timer_count(3))
@@ -73,7 +73,7 @@ class TrafficSignal:
             if self.num_of_light != 3:
                 self.green_light(self.num_of_light)
             self.isTimeout = True
-        elif self.location_info[self.num_of_light] > 3:
+        elif self.location_info[self.num_of_light] >= 3:
             self.green_light(self.num_of_light)
 
 
