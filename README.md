@@ -27,3 +27,7 @@ For yolo detector
 2.conda install -c conda-forge opencv
 3.conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
 ```
+
+# Demonstration
+Click the following thumbnail for watching project's demonstration video.
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/P5skFgb6Pg0/0.jpg)](https://www.youtube.com/watch?v=P5skFgb6Pg0)
